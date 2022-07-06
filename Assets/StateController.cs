@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-public abstract class StateController
+public abstract class StateController : MonoBehaviour
 {
     protected Dictionary<int, State> stateDic;
     protected int currentState;
 
-    public abstract void Init(GameObject root, int startState);
+    public abstract void Init(int startState);
 
     public void SetState(int state)
     {
@@ -28,7 +28,7 @@ public abstract class StateController
     {
         if (stateDic.ContainsKey(currentState) && stateDic[currentState] != null)
         {
-                stateDic[currentState].Update();
+            stateDic[currentState].Update();
         }
     }
 }
@@ -42,17 +42,14 @@ public class EnemyStateController : StateController
         DEAD,
         NONE,
     }
-    public override void Init(GameObject root, int startState)
+    public override void Init(int startState)
     {
-        stateDic.Add((int)EnemyState.FIND_ENEMY, new FindEnemy());
-        stateDic.Add((int)EnemyState.LOCOMOTION, new Locomotion());
-        stateDic.Add((int)EnemyState.ATTACK, new Attack());
-        stateDic.Add((int)EnemyState.DEAD, new Dead());
+        stateDic = new Dictionary<int, State>();
 
-        foreach (var item in stateDic)
-        {
-            item.Value.SetRootObject(root);
-        }
+        stateDic.Add((int)EnemyState.FIND_ENEMY, new FindEnemy(this));
+        stateDic.Add((int)EnemyState.LOCOMOTION, new Locomotion(this));
+        stateDic.Add((int)EnemyState.ATTACK, new Attack(this));
+        stateDic.Add((int)EnemyState.DEAD, new Dead(this));
 
         if (stateDic.ContainsKey(startState)) 
         {

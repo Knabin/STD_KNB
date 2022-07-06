@@ -13,7 +13,12 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>(true);
-        stateController = new EnemyStateController();
+        stateController = GetComponentInChildren<EnemyStateController>(true);
+
+        if (stateController == null)
+        {
+            stateController = this.gameObject.AddComponent<EnemyStateController>();
+        }
 
         // UniRX,
         // 생상성 향상
@@ -34,7 +39,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        stateController.Init(this.gameObject, (int)EnemyStateController.EnemyState.FIND_ENEMY);
+        stateController.Init((int)EnemyStateController.EnemyState.FIND_ENEMY);
     }
 
     private void Update()

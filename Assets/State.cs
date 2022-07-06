@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public abstract class State
+public class State
 {
-    protected GameObject rootObject;
+    protected StateController controller;
 
-    public void SetRootObject(GameObject root)
+    public State(StateController controller)
     {
-        rootObject = root;
+        this.controller = controller;
     }
 
-    public abstract void Enter();
-    public abstract void Update();
-    public abstract void Exit();
+    public virtual void Enter() {}
+    public virtual void Update() {}
+    public virtual void Exit() {}
 
 }
