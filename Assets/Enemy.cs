@@ -4,47 +4,44 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 
-public abstract class AIStateBase
-{
-    //public abstract void Enter();
-    //public abstract void Update();
-    //public abstract void Exit();
-
-}
-
-public class FindEnemy : AIStateBase
-{
-
-}
-
-
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
     Animator animator;
-    // Unity ÁöÇâÀº, ÀÚÃ¼ Å¬·¡½º¸¦ »ç¿ëÇÏ´Â °ÍÀ» ²Ï³ª ÁöÇâÇÔ.
-    // ¹«°ÌÁö ¾Ê°Ô
-
-    // 
-    // Enter, Update, Exit
+    EnemyStateController stateController;
 
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>(true);
+        stateController = new EnemyStateController();
 
         // UniRX,
-        // »ı»ó¼º Çâ»ó
-        // ¼³°èµµ ÁÁ¾ÆÁú °Í ¼¼·ÃµÇÁü, Æ÷Æ®Æú¸®¿Àµµ Á» ÀÖ¾îº¸ÀÓ
+        // ìƒìƒì„± í–¥ìƒ
+        // ì„¤ê³„ë„ ì¢‹ì•„ì§ˆ ê²ƒ ì„¸ë ¨ë˜ì§, í¬íŠ¸í´ë¦¬ì˜¤ë„ ì¢€ ìˆì–´ë³´ì„
 
-        // ¾÷µ¥ÀÌÆ®¸¦ ÁöÄÑº¸´Â ¿ÉÀú¹ö¸¦ ¸¸µé°í,
-        // ±× ÀÌº¥Æ®¸¦ ±¸µ¶ÇÑ´Ù.
+        // ì—…ë°ì´íŠ¸ë¥¼ ì§€ì¼œë³´ëŠ” ì˜µì €ë²„ë¥¼ ë§Œë“¤ê³ ,
+        // ê·¸ ì´ë²¤íŠ¸ë¥¼ êµ¬ë…í•œë‹¤.
         this.UpdateAsObservable().Subscribe(_ => {
             if(animator.GetCurrentAnimatorStateInfo(0).IsName("FindEnemy"))
             {
                 Debug.LogError("I am Find Enemy");
-                // ÀûÀ» Ã£¾Æº½,
+                // ì ì„ ì°¾ì•„ë´„,
                 animator.SetBool("IsFindEnemy", true);
             }
         }).AddTo(this);
+    }
+
+
+    private void Start()
+    {
+        stateController.Init(this.gameObject, (int)EnemyStateController.EnemyState.FIND_ENEMY);
+    }
+
+    private void Update()
+    {
+        if (stateController != null)
+        {
+            stateController.StateUpdate();
+        }
     }
 }
